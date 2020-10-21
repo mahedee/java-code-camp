@@ -1,2 +1,2 @@
-# java-code-camp
-Learning Java
+# References
+* [Getting Started with Java in VS Code](https://code.visualstudio.com/docs/java/java-tutorial)
