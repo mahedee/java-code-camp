@@ -8,7 +8,7 @@ public class Fibonacci {
          */
         Scanner scan = new Scanner(System.in);
 
-        // This method reads the number provided using keyboard
+        //  This method reads the number provided using keyboard
         System.out.println("Please enter a number. ");
         int n = scan.nextInt();
 
