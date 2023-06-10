@@ -11,4 +11,4 @@ Topics to explore
 
 * Javadoc comments
 
-* Practice up to: 2.7: Using comments in Code
+* Practice up to: 2.9: Summary
