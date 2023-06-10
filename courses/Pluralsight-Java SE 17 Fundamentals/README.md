@@ -6,3 +6,9 @@ Note:
 * JRE - Java Runtime Environment
 
 * [How to Install Java on Windows](https://phoenixnap.com/kb/install-java-windows)
+
+Topics to explore
+
+* Javadoc comments
+
+* Practice up to: 2.7: Using comments in Code
