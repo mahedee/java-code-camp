@@ -1,4 +1,4 @@
-URL: [Java SE 17 Fundamentals](https://app.pluralsight.com/library/courses/java-se-17-fundamentals/table-of-contents)
+URL: [Pluralsight - Java SE 17 Fundamentals](https://app.pluralsight.com/library/courses/java-se-17-fundamentals/table-of-contents)
 
 Note:
 1. Configure ItellijIDEA
@@ -7,8 +7,11 @@ Note:
 
 * [How to Install Java on Windows](https://phoenixnap.com/kb/install-java-windows)
 
-Topics to explore
+## Topics to explore:
+Javadoc comments, Final Variable, prefix/postfix operation, compound assignment, var keyword, conditional assignement, 
 
-* Javadoc comments
+## Topics to be write
 
-* Practice up to: 2.9: Summary
+- Similarities between readonly in c# and final variable in Java
+
+* Practice up to: 4.3: If-else statement
