@@ -15,4 +15,4 @@ Javadoc comments, Final Variable, prefix/postfix operation, compound assignment,
 - Similarities between readonly in c# and final variable in Java
 - What is the difference between logical operator and conditional logical operator in Java - & vs &&, | vs ||
 
-* Practice up to: 4.6: Logical vs. Conditional Operators
+* Practice up to: 4.11: Summary
