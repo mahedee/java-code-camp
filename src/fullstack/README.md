@@ -10,3 +10,4 @@
 - [Github Repo](https://github.com/itsmaheshkariya/spring-boot-react-crud)
 - [Youtube - Spring Boot React MySQL FullStack CRUD Operation | Swagger | Docker | REST API | SpringFox | VSCode](https://www.youtube.com/watch?v=aYvU0vI_Tg0)
 - [Documenting a Spring REST API Using OpenAPI 3.0](https://www.baeldung.com/spring-rest-openapi-documentation)
+- [Materialize CSS](https://materializecss.com/)
