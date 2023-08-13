@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 function App() {
@@ -10,9 +10,17 @@ function App() {
     password: "",
   });
 
-  // const loadUser = useCallback(() => {
-
-  // });
+  function loadUser() {
+    axios.get("http://localhost:8080/api/").then((res) => {
+      setState({
+        users: res.data,
+        id: 0,
+        name: "",
+        email: "",
+        password: "",
+      });
+    });
+  }
 
   useEffect(() => {
     //debugger;
@@ -26,7 +34,7 @@ function App() {
       });
     });
 
-    console.log("user data", state.users);
+    console.log("user data test", state.users);
   }, []);
 
   function onSubmit(event, id) {
@@ -34,30 +42,30 @@ function App() {
     if (id === 0) {
       axios
         .post("http://localhost:8080/api/", {
-          name: this.state.name,
-          email: this.state.email,
-          password: this.state.password,
+          name: state.name,
+          email: state.email,
+          password: state.password,
         })
         .then((res) => {
-          this.componentDidMount();
+          loadUser();
         });
     } else {
       axios
         .put("http://localhost:8080/api/", {
-          id: this.state.id,
-          name: this.state.name,
-          email: this.state.email,
-          password: this.state.password,
+          id: state.id,
+          name: state.name,
+          email: state.email,
+          password: state.password,
         })
         .then(() => {
-          this.componentDidMount();
+          loadUser();
         });
     }
   }
 
   function onDelete(id) {
     axios.delete(`http://localhost:8080/api/${id}`).then(() => {
-      this.componentDidMount();
+      loadUser();
     });
   }
 
@@ -81,7 +89,7 @@ function App() {
             <div class="input-field col s12">
               <i class="material-icons prefix">person</i>
               <input
-                onChange={(e) => setState({ ...state, name: e.target.value })}
+                onChange={(e) => setState({ name: e.target.value })}
                 value={state.name}
                 type="text"
                 id="autocomplete-input"
@@ -121,6 +129,7 @@ function App() {
             </button>
           </form>
         </div>
+
         <div className="col s6">
           <table>
             <thead>
