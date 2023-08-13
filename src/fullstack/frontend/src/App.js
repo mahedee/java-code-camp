@@ -1,22 +1,88 @@
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+
 function App() {
-  const intialState = {
+  const [state, setState] = useState({
     users: [],
     id: 0,
     name: "",
     email: "",
     password: "",
-  };
+  });
+
+  // const loadUser = useCallback(() => {
+
+  // });
+
+  useEffect(() => {
+    //debugger;
+    axios.get("http://localhost:8080/api/").then((res) => {
+      setState({
+        users: res.data,
+        id: 0,
+        name: "",
+        email: "",
+        password: "",
+      });
+    });
+
+    console.log("user data", state.users);
+  }, []);
+
+  function onSubmit(event, id) {
+    event.preventDefault();
+    if (id === 0) {
+      axios
+        .post("http://localhost:8080/api/", {
+          name: this.state.name,
+          email: this.state.email,
+          password: this.state.password,
+        })
+        .then((res) => {
+          this.componentDidMount();
+        });
+    } else {
+      axios
+        .put("http://localhost:8080/api/", {
+          id: this.state.id,
+          name: this.state.name,
+          email: this.state.email,
+          password: this.state.password,
+        })
+        .then(() => {
+          this.componentDidMount();
+        });
+    }
+  }
+
+  function onDelete(id) {
+    axios.delete(`http://localhost:8080/api/${id}`).then(() => {
+      this.componentDidMount();
+    });
+  }
+
+  function onEdit(id) {
+    axios.get(`http://localhost:8080/api/${id}`).then((res) => {
+      console.log(res.data);
+      this.setState({
+        id: res.data.id,
+        name: res.data.name,
+        email: res.data.email,
+        password: res.data.password,
+      });
+    });
+  }
 
   return (
     <div className="container">
-      {/* <div className="row">
+      <div className="row">
         <div className="col s6">
-          <form onSubmit={(e) => this.submit(e, this.state.id)}>
+          <form onSubmit={(e) => onSubmit(e, state.id)}>
             <div class="input-field col s12">
               <i class="material-icons prefix">person</i>
               <input
-                onChange={(e) => this.setState({ name: e.target.value })}
-                value={this.state.name}
+                onChange={(e) => setState({ ...state, name: e.target.value })}
+                value={state.name}
                 type="text"
                 id="autocomplete-input"
                 class="autocomplete"
@@ -26,8 +92,8 @@ function App() {
             <div class="input-field col s12">
               <i class="material-icons prefix">email</i>
               <input
-                onChange={(e) => this.setState({ email: e.target.value })}
-                value={this.state.email}
+                onChange={(e) => setState({ email: e.target.value })}
+                value={state.email}
                 type="email"
                 id="autocomplete-input"
                 class="autocomplete"
@@ -37,8 +103,8 @@ function App() {
             <div class="input-field col s12">
               <i class="material-icons prefix">vpn_key</i>
               <input
-                onChange={(e) => this.setState({ password: e.target.value })}
-                value={this.state.password}
+                onChange={(e) => setState({ password: e.target.value })}
+                value={state.password}
                 type="password"
                 id="autocomplete-input"
                 class="autocomplete"
@@ -68,14 +134,14 @@ function App() {
             </thead>
 
             <tbody>
-              {this.state.users.map((user) => (
+              {state.users.map((user) => (
                 <tr key={user.id}>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
                   <td>{user.password}</td>
                   <td>
                     <button
-                      onClick={(e) => this.edit(user.id)}
+                      onClick={(e) => onEdit(user.id)}
                       class="btn waves-effect waves-light"
                       type="submit"
                       name="action"
@@ -85,7 +151,7 @@ function App() {
                   </td>
                   <td>
                     <button
-                      onClick={(e) => this.delete(user.id)}
+                      onClick={(e) => onDelete(user.id)}
                       class="btn waves-effect waves-light"
                       type="submit"
                       name="action"
@@ -98,7 +164,7 @@ function App() {
             </tbody>
           </table>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
