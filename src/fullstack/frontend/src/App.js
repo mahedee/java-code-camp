@@ -143,33 +143,34 @@ function App() {
             </thead>
 
             <tbody>
-              {state.users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{user.password}</td>
-                  <td>
-                    <button
-                      onClick={(e) => onEdit(user.id)}
-                      class="btn waves-effect waves-light"
-                      type="submit"
-                      name="action"
-                    >
-                      <i class="material-icons">edit</i>
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      onClick={(e) => onDelete(user.id)}
-                      class="btn waves-effect waves-light"
-                      type="submit"
-                      name="action"
-                    >
-                      <i class="material-icons">delete</i>
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {state.users &&
+                state.users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.password}</td>
+                    <td>
+                      <button
+                        onClick={(e) => onEdit(user.id)}
+                        class="btn waves-effect waves-light"
+                        type="submit"
+                        name="action"
+                      >
+                        <i class="material-icons">edit</i>
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        onClick={(e) => onDelete(user.id)}
+                        class="btn waves-effect waves-light"
+                        type="submit"
+                        name="action"
+                      >
+                        <i class="material-icons">delete</i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
