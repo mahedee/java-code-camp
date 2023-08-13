@@ -77,13 +77,21 @@ function App() {
 
   function onEdit(id) {
     axios.get(`http://localhost:8080/api/${id}`).then((res) => {
-      console.log(res.data);
-      setState({
+      //console.log(res.data);
+      // setState({
+      //   id: res.data.id,
+      //   name: res.data.name,
+      //   email: res.data.email,
+      //   password: res.data.password,
+      // });
+
+      setState((prevState) => ({
+        ...prevState,
         id: res.data.id,
         name: res.data.name,
         email: res.data.email,
         password: res.data.password,
-      });
+      }));
     });
   }
 
