@@ -12,29 +12,35 @@ function App() {
 
   function loadUser() {
     axios.get("http://localhost:8080/api/").then((res) => {
-      setState({
+      setState((prevState) => ({
+        ...prevState,
         users: res.data,
-        id: 0,
-        name: "",
-        email: "",
-        password: "",
-      });
+      }));
     });
   }
 
-  useEffect(() => {
-    //debugger;
-    axios.get("http://localhost:8080/api/").then((res) => {
-      setState({
-        users: res.data,
-        id: 0,
-        name: "",
-        email: "",
-        password: "",
-      });
-    });
+  // useEffect(() => {
+  //   //debugger;
+  //   axios.get("http://localhost:8080/api/").then((res) => {
+  //     setState({
+  //       users: res.data,
+  //       id: 0,
+  //       name: "",
+  //       email: "",
+  //       password: "",
+  //     });
+  //   });
 
-    console.log("user data test", state.users);
+  //   console.log("user data test", state.users);
+  // }, []);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/").then((res) => {
+      setState((prevState) => ({
+        ...prevState,
+        users: res.data,
+      }));
+    });
   }, []);
 
   function onSubmit(event, id) {
@@ -72,7 +78,7 @@ function App() {
   function onEdit(id) {
     axios.get(`http://localhost:8080/api/${id}`).then((res) => {
       console.log(res.data);
-      this.setState({
+      setState({
         id: res.data.id,
         name: res.data.name,
         email: res.data.email,
@@ -89,7 +95,12 @@ function App() {
             <div class="input-field col s12">
               <i class="material-icons prefix">person</i>
               <input
-                onChange={(e) => setState({ name: e.target.value })}
+                onChange={(e) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    name: e.target.value,
+                  }))
+                }
                 value={state.name}
                 type="text"
                 id="autocomplete-input"
@@ -97,10 +108,16 @@ function App() {
               />
               <label for="autocomplete-input">Autocomplete</label>
             </div>
+
             <div class="input-field col s12">
               <i class="material-icons prefix">email</i>
               <input
-                onChange={(e) => setState({ email: e.target.value })}
+                onChange={(e) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    email: e.target.value,
+                  }))
+                }
                 value={state.email}
                 type="email"
                 id="autocomplete-input"
@@ -108,10 +125,16 @@ function App() {
               />
               <label for="autocomplete-input">Email</label>
             </div>
+
             <div class="input-field col s12">
               <i class="material-icons prefix">vpn_key</i>
               <input
-                onChange={(e) => setState({ password: e.target.value })}
+                onChange={(e) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    password: e.target.value,
+                  }))
+                }
                 value={state.password}
                 type="password"
                 id="autocomplete-input"
