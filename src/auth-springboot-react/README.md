@@ -22,3 +22,4 @@ INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 - https://github.com/bezkoder/spring-boot-spring-security-jwt-authentication
 - https://github.com/bezkoder/react-jwt-auth
 - https://tariqul-islam-rony.medium.com/spring-boot-with-visual-studio-code-visual-studio-code-part-2-7943febb52f8
+- [How to import and debug a Spring Boot Java Maven project in VS Code](https://www.youtube.com/watch?v=XJeT0ErXBHo)
