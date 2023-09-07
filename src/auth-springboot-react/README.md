@@ -14,6 +14,8 @@ INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
 INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 ```
 
+- Swagger: http://localhost:8080/swagger-ui/index.html
+
 ## References
 
 - https://springjava.com/spring-boot/how-to-create-a-spring-boot-project-in-vs-code
@@ -26,3 +28,5 @@ INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 - [Form Login and Basic Authentication in springdoc-openapi](https://www.baeldung.com/springdoc-openapi-form-login-and-basic-authentication)
 - [Configure JWT Authentication for OpenAPI](https://www.baeldung.com/openapi-jwt-authentication)
 - [Swagger 3 with Spring boot 3+ and Spring Security](https://www.youtube.com/watch?v=VYvqF-J2JFc)
+- https://patroclosdev.medium.com/springboot-3-api-token-authentication-using-jwt-and-swagger-ui-4c25c24d5abb
+- https://github.com/patroklos83/springboot3_jwtauth?source=post_page-----4c25c24d5abb--------------------------------
