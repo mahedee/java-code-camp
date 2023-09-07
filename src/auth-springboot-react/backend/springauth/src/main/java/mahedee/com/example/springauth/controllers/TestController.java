@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/test")
-@SecurityRequirement(name = "Bearer Authentication")
+// @SecurityRequirement(name = "Bearer Authentication")
 public class TestController {
 
     @GetMapping("/all")

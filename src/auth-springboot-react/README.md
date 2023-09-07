@@ -30,3 +30,4 @@ INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 - [Swagger 3 with Spring boot 3+ and Spring Security](https://www.youtube.com/watch?v=VYvqF-J2JFc)
 - https://patroclosdev.medium.com/springboot-3-api-token-authentication-using-jwt-and-swagger-ui-4c25c24d5abb
 - https://github.com/patroklos83/springboot3_jwtauth?source=post_page-----4c25c24d5abb--------------------------------
+- https://medium.com/nerd-for-tech/openapi-specification-swagger-authentication-c150f86748ea
