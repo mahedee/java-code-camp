@@ -1,4 +1,18 @@
-## Notes
+## Note
+
+- How to run application
+
+* Create a database like: testdb
+* Go to the directory whre pom.xml file exists
+* Run mvn spring-boot:run
+* Now see corresponding table is created already
+* Now insert the following data in role table
+
+```
+INSERT INTO roles(name) VALUES('ROLE_USER');
+INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
+INSERT INTO roles(name) VALUES('ROLE_ADMIN');
+```
 
 ## References
 
