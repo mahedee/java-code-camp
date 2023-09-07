@@ -14,12 +14,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import mahedee.com.example.springauth.security.jwt.AuthEntryPointJwt;
 import mahedee.com.example.springauth.security.jwt.AuthTokenFilter;
 import mahedee.com.example.springauth.security.services.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
+// @SecurityScheme(name = "Bearer Authentication", type =
+// SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
+
 public class WebSecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -57,6 +62,10 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html")
+                        .permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

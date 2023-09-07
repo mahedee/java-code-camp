@@ -23,3 +23,6 @@ INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 - https://github.com/bezkoder/react-jwt-auth
 - https://tariqul-islam-rony.medium.com/spring-boot-with-visual-studio-code-visual-studio-code-part-2-7943febb52f8
 - [How to import and debug a Spring Boot Java Maven project in VS Code](https://www.youtube.com/watch?v=XJeT0ErXBHo)
+- [Form Login and Basic Authentication in springdoc-openapi](https://www.baeldung.com/springdoc-openapi-form-login-and-basic-authentication)
+- [Configure JWT Authentication for OpenAPI](https://www.baeldung.com/openapi-jwt-authentication)
+- [Swagger 3 with Spring boot 3+ and Spring Security](https://www.youtube.com/watch?v=VYvqF-J2JFc)
