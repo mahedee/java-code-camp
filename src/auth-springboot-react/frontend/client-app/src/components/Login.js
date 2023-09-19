@@ -85,10 +85,6 @@ const Login = (props) => {
               validations={[required]}
             />
           </div>
-        </Form>
-
-        {/* <Form onSubmit={handleLogin} ref={form}>
-
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
@@ -118,8 +114,9 @@ const Login = (props) => {
               </div>
             </div>
           )}
+
           <CheckButton style={{ display: "none" }} ref={checkBtn} />
-        </Form> */}
+        </Form>
       </div>
     </div>
   );
