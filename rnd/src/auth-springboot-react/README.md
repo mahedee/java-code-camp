@@ -5,6 +5,7 @@
 - Create a database like: testdb
 - Change connection string in src->main->resources->application.properties
 - Go to the directory whre pom.xml file exists
+- Change the MySQL database password to "root"
 - Run mvn `spring-boot:run`
 - Now see corresponding table is created already
 - Now insert the following data in role table
@@ -18,8 +19,19 @@ INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 - Browse back end application using swagger using following URL
 - Swagger: http://localhost:8080/swagger-ui/index.html
 - Register a new user
+- Sample user: admin, password: mahedee.net and role as ROLE_ADMIN
+- Sample registration json like below.
 
-- Sample user: admin, password: mahedee.net
+```json
+{
+  "username": "admin",
+  "email": "admin@gmail.com",
+  "role": [
+    "ROLE_ADMIN"
+  ],
+  "password": "mahedee.net"
+}
+```
 
 - **Frontend**
 - If required changes the API end point in services -> \*.js files
