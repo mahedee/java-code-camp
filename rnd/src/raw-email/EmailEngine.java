@@ -19,7 +19,7 @@ public class EmailEngine {
         final String username = "arisha.hasan17@outlook.com";
 
         //your email password
-        final String passwd = "Your password";
+        final String passwd = "mypassword";
 
         
         Properties props = new Properties();
@@ -52,7 +52,7 @@ public class EmailEngine {
                 System.out.println("From: " + message.getFrom()[0]);
             }
 
-            // close the store and folder objects
+            // // close the store and folder objects
             emailFolder.close(false);
             store.close();
         } catch (MessagingException e) {

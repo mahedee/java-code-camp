@@ -16,3 +16,13 @@ javac -cp javax.mail-1.6.2.jar .\EmailEngine.java
 Run
 java EmailEngine
 java -cp javax.mail-1.6.2.jar EmailEngine
+
+
+PS D:\Projects\Github\java-code-camp\rnd\src\raw-email> javac -cp ".;javax.mail-1.6.2.jar;jakarta.activation-2.0.1.jar" EmailEngine.java
+PS D:\Projects\Github\java-code-camp\rnd\src\raw-email> java -cp ".;javax.mail-1.6.2.jar;jakarta.activation-2.0.1.jar" EmailEngine  
+
+
+--- Final and working
+ javac -cp ".;javax.mail-1.6.2.jar;jakarta.activation-1.2.2.jar" EmailEngine.java
+ java -cp ".;javax.mail-1.6.2.jar;jakarta.activation-1.2.2.jar" EmailEngine
+

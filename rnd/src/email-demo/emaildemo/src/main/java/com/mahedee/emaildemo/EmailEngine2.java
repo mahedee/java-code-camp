@@ -21,7 +21,7 @@ public class EmailEngine2 {
         final String username = "arisha.hasan17@outlook.com";
 
         // Your email password
-        final String passwd = "Your email password";
+        final String passwd = "mypassword";
         Properties props = new Properties();
         props.put("mail.host", "outlook.office365.com");
         props.put("mail.store.protocol", "pop3s");
