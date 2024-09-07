@@ -26,3 +26,7 @@ PS D:\Projects\Github\java-code-camp\rnd\src\raw-email> java -cp ".;javax.mail-1
  javac -cp ".;javax.mail-1.6.2.jar;jakarta.activation-1.2.2.jar" EmailEngine.java
  java -cp ".;javax.mail-1.6.2.jar;jakarta.activation-1.2.2.jar" EmailEngine
 
+--- Linux command 
+javac -cp ".:javax.mail-1.6.2.jar:jakarta.activation-1.2.2.jar" EmailEngine.java
+java -cp ".:javax.mail-1.6.2.jar:jakarta.activation-1.2.2.jar" EmailEngine
+
