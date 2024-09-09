@@ -7,10 +7,14 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPDigestCalculatorProviderBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPKeyPair;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyEncryptorBuilder;
+import java.io.ByteArrayOutputStream;
 
 import java.io.FileOutputStream;
 import java.security.*;
 import java.util.Date;
+
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class PGPKeyGenerator {
 
@@ -18,8 +22,27 @@ public class PGPKeyGenerator {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    public static void generateKeyPair(String identity, String passphrase) throws Exception {
-        
+
+    public static class PGPKeys {
+        private String publicKey;
+        private String privateKey;
+
+        public PGPKeys(String publicKey, String privateKey) {
+            this.publicKey = publicKey;
+            this.privateKey = privateKey;
+        }
+
+        public String getPublicKey() {
+            return publicKey;
+        }
+
+        public String getPrivateKey() {
+            return privateKey;
+        }
+    }
+
+   // public static void generateKeyPair(String identity, String passphrase) throws Exception {
+    public static PGPKeys generateKeyPair(String identity, String passphrase) throws Exception {      
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
         keyGen.initialize(2048);
         KeyPair keyPair = keyGen.generateKeyPair();
@@ -40,22 +63,70 @@ public class PGPKeyGenerator {
                         .build(passphrase.toCharArray())
         );
 
-        // Write public key
-        try (FileOutputStream fos = new FileOutputStream("public_key.asc");
-             ArmoredOutputStream aos = new ArmoredOutputStream(fos)) {
+        //PGPPublicKey skey = secretKey.getPublicKey();
+
+
+        // Capture public key in string
+        ByteArrayOutputStream publicKeyOut = new ByteArrayOutputStream();
+        try (ArmoredOutputStream aos = new ArmoredOutputStream(publicKeyOut)) {
             secretKey.getPublicKey().encode(aos);
         }
+        String publicKeyString = publicKeyOut.toString("UTF-8");
 
-        // Write private key
-        try (FileOutputStream fos = new FileOutputStream("private_key.asc");
-             ArmoredOutputStream aos = new ArmoredOutputStream(fos)) {
-            secretKey.encode(aos);
-        }
 
-        System.out.println("Keys generated and saved to files.");
+          // Capture private key in string
+          ByteArrayOutputStream privateKeyOut = new ByteArrayOutputStream();
+          try (ArmoredOutputStream aos = new ArmoredOutputStream(privateKeyOut)) {
+              secretKey.encode(aos);
+          }
+          String privateKeyString = privateKeyOut.toString("UTF-8");
+  
+          System.out.println("Keys generated.");
+  
+          return new PGPKeys(publicKeyString, privateKeyString);
+
+        // // Write public key
+        // try (FileOutputStream fos = new FileOutputStream("public_key.asc");
+        //      ArmoredOutputStream aos = new ArmoredOutputStream(fos)) {
+        //     secretKey.getPublicKey().encode(aos);
+        // }
+
+        
+        // // Write private key
+        // try (FileOutputStream fos = new FileOutputStream("private_key.asc");
+        //      ArmoredOutputStream aos = new ArmoredOutputStream(fos)) {
+        //     secretKey.encode(aos);
+        // }
+
+        // System.out.println("Keys generated and saved to files.");
     }
 
+    public static void writeKeysToFile(String publicKey, String privateKey) throws IOException {
+        // Write public key to public_key.txt
+        try (FileWriter publicKeyWriter = new FileWriter("public_key.txt")) {
+            publicKeyWriter.write(publicKey);
+        }
+
+        // Write private key to private_key.txt
+        try (FileWriter privateKeyWriter = new FileWriter("private_key.txt")) {
+            privateKeyWriter.write(privateKey);
+        }
+
+        System.out.println("Public and Private keys saved to files.");
+    }
+
+
     public static void main(String[] args) throws Exception {
-        generateKeyPair("test@example.com", "strong-passphrase");
+        //generateKeyPair("test@example.com", "strong-passphrase");
+
+        PGPKeys pgpKeys = generateKeyPair("test@example.com", "strong-passphrase");
+        System.out.println("Public Key:\n" + pgpKeys.getPublicKey());
+        System.out.println("Private Key:\n" + pgpKeys.getPrivateKey());
+
+        // Write the keys to text files
+        writeKeysToFile(pgpKeys.getPublicKey(), pgpKeys.getPrivateKey());
+
+        System.out.println("Public Key and Private Key written to public_key.txt and private_key.txt.");
+            
     }
 }
