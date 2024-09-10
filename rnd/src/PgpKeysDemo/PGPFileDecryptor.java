@@ -1,10 +1,10 @@
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
-import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
-import org.bouncycastle.openpgp.operator.jcajce.JcePBEDataDecryptorFactoryBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
-import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
+import org.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
+import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 
 import java.io.*;
 import java.security.Security;
@@ -64,43 +64,53 @@ public class PGPFileDecryptor {
         }
     }
 
+    // Updated decryptPrivateKey method
     private static PGPPrivateKey decryptPrivateKey(PGPSecretKey secretKey, String passphrase) throws PGPException {
-        PGPPrivateKey privateKey = null;
-        if (secretKey != null) {
-            PGPPrivateKey key = secretKey.extractPrivateKey(
-                    new JcePBEDataDecryptorFactoryBuilder().setProvider("BC").build(passphrase.toCharArray())
-            );
-            privateKey = key;
+        if (secretKey == null) {
+            throw new IllegalArgumentException("Secret key is null");
         }
-        return privateKey;
+
+        PBESecretKeyDecryptor decryptorFactory = new JcePBESecretKeyDecryptorBuilder()
+                .setProvider("BC")
+                .build(passphrase.toCharArray());
+
+        return secretKey.extractPrivateKey(decryptorFactory);
     }
 
     private static void decryptData(PGPEncryptedDataList encryptedDataList, PGPPrivateKey privateKey, OutputStream outStream) throws IOException, PGPException {
         PGPPublicKeyEncryptedData encryptedData = null;
-
+    
         // Find the encrypted data for the correct private key
-        for (Iterator<PGPPublicKeyEncryptedData> it = encryptedDataList.getEncryptedDataObjects(); it.hasNext(); ) {
-            encryptedData = it.next();
-            if (encryptedData.getKeyID() == privateKey.getKeyID()) {
-                break;
+        for (Iterator<PGPEncryptedData> it = encryptedDataList.getEncryptedDataObjects(); it.hasNext(); ) {
+            PGPEncryptedData pgpEncryptedData = it.next();
+    
+            // Check if it's an instance of PGPPublicKeyEncryptedData
+            if (pgpEncryptedData instanceof PGPPublicKeyEncryptedData) {
+                PGPPublicKeyEncryptedData publicKeyEncryptedData = (PGPPublicKeyEncryptedData) pgpEncryptedData;
+    
+                // Match the encrypted data with the provided private key
+                if (publicKeyEncryptedData.getKeyID() == privateKey.getKeyID()) {
+                    encryptedData = publicKeyEncryptedData;
+                    break;
+                }
             }
         }
-
+    
         if (encryptedData == null) {
             throw new IllegalArgumentException("No encrypted data found for the provided private key.");
         }
-
+    
         // Decrypt the file
         InputStream clearData = encryptedData.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(privateKey));
         PGPObjectFactory plainFactory = new PGPObjectFactory(clearData, new JcaKeyFingerprintCalculator());
         Object message = plainFactory.nextObject();
-
+    
         if (message instanceof PGPCompressedData) {
             PGPCompressedData compressedData = (PGPCompressedData) message;
             plainFactory = new PGPObjectFactory(compressedData.getDataStream(), new JcaKeyFingerprintCalculator());
             message = plainFactory.nextObject();
         }
-
+    
         if (message instanceof PGPLiteralData) {
             PGPLiteralData literalData = (PGPLiteralData) message;
             try (InputStream literalInput = literalData.getInputStream()) {
@@ -112,6 +122,7 @@ public class PGPFileDecryptor {
             }
         }
     }
+    
 
     public static void main(String[] args) throws Exception {
         String inputFilePath = "encrypted_sample.txt";
