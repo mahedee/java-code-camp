@@ -1,8 +1,9 @@
 import org.bouncycastle.bcpg.ArmoredInputStream;
+import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.*;
-
+import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
 
@@ -21,6 +22,10 @@ public class PGPFileEncryptor {
         // Read the public key from the file
         PGPPublicKey publicKey = readPublicKey(publicKeyPath);
 
+    //   try (FileOutputStream fos = new FileOutputStream("public_key.txt");
+    //   ArmoredOutputStream aos = new ArmoredOutputStream(fos)) {
+    //   secretKey.getPublicKey().encode(aos);
+    //}
         // Encrypt the file
         try (FileOutputStream fos = new FileOutputStream(outputFilePath);
              BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -73,14 +78,22 @@ public class PGPFileEncryptor {
     }
 
     private static PGPPublicKey readPublicKeyFromStream(InputStream keyIn) throws IOException, PGPException {
-        InputStream decoderStream = PGPUtil.getDecoderStream(keyIn);
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, null);
-        Object object = pgpFactory.nextObject();
-        if (!(object instanceof PGPPublicKeyRingCollection)) {
-            throw new IllegalArgumentException("Input does not contain a valid public key");
-        }
+        //InputStream decoderStream = PGPUtil.getDecoderStream(keyIn);
+        //PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, null);
+        //Object object = pgpFactory.nextObject();
 
-        PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
+        InputStream decoderStream = PGPUtil.getDecoderStream(keyIn); // Decode the key stream properly
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, new JcaKeyFingerprintCalculator()); // Ensure KeyFingerPrintCalculator is used
+        Object object = pgpFactory.nextObject();
+        // if (!(object instanceof PGPPublicKeyRingCollection)) {
+        //     throw new IllegalArgumentException("Input does not contain a valid public key");
+        // }
+
+        if (object instanceof PGPPublicKeyRingCollection) {
+            PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
+    
+
+            // Iterate over key rings to find encryption key
         for (Iterator<PGPPublicKeyRing> keyRingIterator = keyRingCollection.getKeyRings(); keyRingIterator.hasNext(); ) {
             PGPPublicKeyRing keyRing = keyRingIterator.next();
             for (Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys(); keyIterator.hasNext(); ) {
@@ -90,13 +103,26 @@ public class PGPFileEncryptor {
                 }
             }
         }
-        throw new IllegalArgumentException("No encryption key found in the public key ring.");
+    }
+
+    throw new IllegalArgumentException("No encryption key found in the public key ring.");
+        // PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
+        // for (Iterator<PGPPublicKeyRing> keyRingIterator = keyRingCollection.getKeyRings(); keyRingIterator.hasNext(); ) {
+        //     PGPPublicKeyRing keyRing = keyRingIterator.next();
+        //     for (Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys(); keyIterator.hasNext(); ) {
+        //         PGPPublicKey key = keyIterator.next();
+        //         if (key.isEncryptionKey()) {
+        //             return key;
+        //         }
+        //     }
+        // }
+        // throw new IllegalArgumentException("No encryption key found in the public key ring.");
     }
 
     public static void main(String[] args) throws Exception {
         String inputFilePath = "sample.txt";
         String outputFilePath = "encrypted_sample.txt";
-        String publicKeyPath = "public_key.txt";
+        String publicKeyPath = "public_key.asc";
 
         encryptFile(inputFilePath, outputFilePath, publicKeyPath);
     }
