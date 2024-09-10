@@ -100,11 +100,16 @@ public class PGPFileDecryptor {
             throw new IllegalArgumentException("No encrypted data found for the provided private key.");
         }
     
+        /* 
         // Decrypt the file
         InputStream clearData = encryptedData.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(privateKey));
         PGPObjectFactory plainFactory = new PGPObjectFactory(clearData, new JcaKeyFingerprintCalculator());
         Object message = plainFactory.nextObject();
     
+        // Debugging: Print the object type to see what is returned
+        System.out.println("Object returned by PGPObjectFactory: " + message.getClass().getName());
+        
+
         if (message instanceof PGPCompressedData) {
             PGPCompressedData compressedData = (PGPCompressedData) message;
             plainFactory = new PGPObjectFactory(compressedData.getDataStream(), new JcaKeyFingerprintCalculator());
@@ -121,6 +126,38 @@ public class PGPFileDecryptor {
                 }
             }
         }
+            */
+
+            try {
+                // Decrypt the file
+                InputStream clearData = encryptedData.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(privateKey));
+                PGPObjectFactory plainFactory = new PGPObjectFactory(clearData, new JcaKeyFingerprintCalculator());
+                Object message = plainFactory.nextObject();
+        
+                // Dealing with compressed data
+                if (message instanceof PGPCompressedData) {
+                    PGPCompressedData compressedData = (PGPCompressedData) message;
+                    plainFactory = new PGPObjectFactory(compressedData.getDataStream(), new JcaKeyFingerprintCalculator());
+                    message = plainFactory.nextObject();
+                }
+        
+                // Dealing with literal data
+                if (message instanceof PGPLiteralData) {
+                    PGPLiteralData literalData = (PGPLiteralData) message;
+                    try (InputStream literalInput = literalData.getInputStream()) {
+                        byte[] buffer = new byte[4096];
+                        int len;
+                        while ((len = literalInput.read(buffer)) > 0) {
+                            outStream.write(buffer, 0, len);
+                        }
+                    }
+                } else {
+                    throw new PGPException("Message is not a literal data packet.");
+                }
+        
+            } catch (Exception e) {
+                throw new PGPException("Error during decryption: " + e.getMessage(), e);
+            }
     }
     
 
