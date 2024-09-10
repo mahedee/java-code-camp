@@ -77,25 +77,75 @@ public class PGPFileEncryptor {
         }
     }
 
-    private static PGPPublicKey readPublicKeyFromStream(InputStream keyIn) throws IOException, PGPException {
-        //InputStream decoderStream = PGPUtil.getDecoderStream(keyIn);
-        //PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, null);
-        //Object object = pgpFactory.nextObject();
+    // private static PGPPublicKey readPublicKeyFromStream(InputStream keyIn) throws IOException, PGPException {
+    //     //InputStream decoderStream = PGPUtil.getDecoderStream(keyIn);
+    //     //PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, null);
+    //     //Object object = pgpFactory.nextObject();
 
-        InputStream decoderStream = PGPUtil.getDecoderStream(keyIn); // Decode the key stream properly
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, new JcaKeyFingerprintCalculator()); // Ensure KeyFingerPrintCalculator is used
-        Object object = pgpFactory.nextObject();
-        // if (!(object instanceof PGPPublicKeyRingCollection)) {
-        //     throw new IllegalArgumentException("Input does not contain a valid public key");
-        // }
+    //     InputStream decoderStream = PGPUtil.getDecoderStream(keyIn); // Decode the key stream properly
+    //     PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, new JcaKeyFingerprintCalculator()); // Ensure KeyFingerPrintCalculator is used
+    //     Object object = pgpFactory.nextObject();
+    //     // if (!(object instanceof PGPPublicKeyRingCollection)) {
+    //     //     throw new IllegalArgumentException("Input does not contain a valid public key");
+    //     // }
 
-        if (object instanceof PGPPublicKeyRingCollection) {
-            PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
+    //     if (object instanceof PGPPublicKeyRingCollection) {
+    //         PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
     
 
+    //         // Iterate over key rings to find encryption key
+    //     for (Iterator<PGPPublicKeyRing> keyRingIterator = keyRingCollection.getKeyRings(); keyRingIterator.hasNext(); ) {
+    //         PGPPublicKeyRing keyRing = keyRingIterator.next();
+    //         for (Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys(); keyIterator.hasNext(); ) {
+    //             PGPPublicKey key = keyIterator.next();
+    //             if (key.isEncryptionKey()) {
+    //                 return key;
+    //             }
+    //         }
+    //     }
+    // }
+
+    // throw new IllegalArgumentException("No encryption key found in the public key ring.");
+    //     // PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
+    //     // for (Iterator<PGPPublicKeyRing> keyRingIterator = keyRingCollection.getKeyRings(); keyRingIterator.hasNext(); ) {
+    //     //     PGPPublicKeyRing keyRing = keyRingIterator.next();
+    //     //     for (Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys(); keyIterator.hasNext(); ) {
+    //     //         PGPPublicKey key = keyIterator.next();
+    //     //         if (key.isEncryptionKey()) {
+    //     //             return key;
+    //     //         }
+    //     //     }
+    //     // }
+    //     // throw new IllegalArgumentException("No encryption key found in the public key ring.");
+    // }
+
+
+    private static PGPPublicKey readPublicKeyFromStream(InputStream keyIn) throws IOException, PGPException {
+        InputStream decoderStream = PGPUtil.getDecoderStream(keyIn);
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(decoderStream, new JcaKeyFingerprintCalculator());
+        Object object = pgpFactory.nextObject();
+
+
+        // Debugging: Print the object type to see what is returned
+        System.out.println("Object returned by PGPObjectFactory: " + object.getClass().getName());
+        
+        if (object instanceof PGPPublicKeyRingCollection) {
+            PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
+
             // Iterate over key rings to find encryption key
-        for (Iterator<PGPPublicKeyRing> keyRingIterator = keyRingCollection.getKeyRings(); keyRingIterator.hasNext(); ) {
-            PGPPublicKeyRing keyRing = keyRingIterator.next();
+            for (PGPPublicKeyRing keyRing : keyRingCollection) {
+                for (PGPPublicKey key : keyRing) {
+                    if (key.isEncryptionKey()) {
+                        System.out.println("Encryption key found!");
+                        return key;
+                    }
+                }
+            }
+        }
+        else if (object instanceof PGPPublicKeyRing) {
+            PGPPublicKeyRing keyRing = (PGPPublicKeyRing) object;
+    
+            // Iterate over public keys in the key ring to find an encryption key
             for (Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys(); keyIterator.hasNext(); ) {
                 PGPPublicKey key = keyIterator.next();
                 if (key.isEncryptionKey()) {
@@ -103,20 +153,8 @@ public class PGPFileEncryptor {
                 }
             }
         }
-    }
 
-    throw new IllegalArgumentException("No encryption key found in the public key ring.");
-        // PGPPublicKeyRingCollection keyRingCollection = (PGPPublicKeyRingCollection) object;
-        // for (Iterator<PGPPublicKeyRing> keyRingIterator = keyRingCollection.getKeyRings(); keyRingIterator.hasNext(); ) {
-        //     PGPPublicKeyRing keyRing = keyRingIterator.next();
-        //     for (Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys(); keyIterator.hasNext(); ) {
-        //         PGPPublicKey key = keyIterator.next();
-        //         if (key.isEncryptionKey()) {
-        //             return key;
-        //         }
-        //     }
-        // }
-        // throw new IllegalArgumentException("No encryption key found in the public key ring.");
+        throw new IllegalArgumentException("No encryption key found in the public key ring.");
     }
 
     public static void main(String[] args) throws Exception {
