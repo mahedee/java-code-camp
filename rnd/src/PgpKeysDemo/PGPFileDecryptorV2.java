@@ -10,7 +10,7 @@ import java.io.*;
 import java.security.Security;
 import java.util.Iterator;
 
-public class PGPFileDecryptor {
+public class PGPFileDecryptorV2 {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -77,6 +77,8 @@ public class PGPFileDecryptor {
         return secretKey.extractPrivateKey(decryptorFactory);
     }
 
+    
+
     private static void decryptData(PGPEncryptedDataList encryptedDataList, PGPPrivateKey privateKey, OutputStream outStream) throws IOException, PGPException {
         PGPPublicKeyEncryptedData encryptedData = null;
     
@@ -100,70 +102,50 @@ public class PGPFileDecryptor {
             throw new IllegalArgumentException("No encrypted data found for the provided private key.");
         }
     
-        /* 
-        // Decrypt the file
-        InputStream clearData = encryptedData.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(privateKey));
-        PGPObjectFactory plainFactory = new PGPObjectFactory(clearData, new JcaKeyFingerprintCalculator());
-        Object message = plainFactory.nextObject();
+        try {
+            // Decrypt the file
+            InputStream clearData = encryptedData.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder()
+                    .setProvider("BC")
+                    .build(privateKey));
     
-        // Debugging: Print the object type to see what is returned
-        System.out.println("Object returned by PGPObjectFactory: " + message.getClass().getName());
-        
-
-        if (message instanceof PGPCompressedData) {
-            PGPCompressedData compressedData = (PGPCompressedData) message;
-            plainFactory = new PGPObjectFactory(compressedData.getDataStream(), new JcaKeyFingerprintCalculator());
-            message = plainFactory.nextObject();
-        }
+            PGPObjectFactory plainFactory = new PGPObjectFactory(clearData, new JcaKeyFingerprintCalculator());
+            Object message = plainFactory.nextObject();
     
-        if (message instanceof PGPLiteralData) {
-            PGPLiteralData literalData = (PGPLiteralData) message;
-            try (InputStream literalInput = literalData.getInputStream()) {
-                byte[] buffer = new byte[4096];
-                int len;
-                while ((len = literalInput.read(buffer)) > 0) {
-                    outStream.write(buffer, 0, len);
-                }
+            // Handle PGPMarker, which can appear in some PGP streams
+            while (message instanceof PGPMarker) {
+                System.out.println("PGPMarker found, moving to the next object...");
+                message = plainFactory.nextObject(); // Skip over marker
             }
-        }
-            */
-
-            try {
-                // Decrypt the file
-                InputStream clearData = encryptedData.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(privateKey));
-                PGPObjectFactory plainFactory = new PGPObjectFactory(clearData, new JcaKeyFingerprintCalculator());
-                Object message = plainFactory.nextObject();
-                
-
-                System.out.println("Object returned by PGPObjectFactory: " + message.getClass().getName());
-        
-                // Dealing with compressed data
-                if (message instanceof PGPCompressedData) {
-                    PGPCompressedData compressedData = (PGPCompressedData) message;
-                    plainFactory = new PGPObjectFactory(compressedData.getDataStream(), new JcaKeyFingerprintCalculator());
-                    message = plainFactory.nextObject();
-                }
-        
-                // Dealing with literal data
-                if (message instanceof PGPLiteralData) {
-                    PGPLiteralData literalData = (PGPLiteralData) message;
-                    try (InputStream literalInput = literalData.getInputStream()) {
-                        byte[] buffer = new byte[4096];
-                        int len;
-                        while ((len = literalInput.read(buffer)) > 0) {
-                            outStream.write(buffer, 0, len);
-                        }
+    
+            System.out.println("Object returned by PGPObjectFactory: " + message.getClass().getName());
+    
+            // Dealing with compressed data
+            if (message instanceof PGPCompressedData) {
+                PGPCompressedData compressedData = (PGPCompressedData) message;
+                plainFactory = new PGPObjectFactory(compressedData.getDataStream(), new JcaKeyFingerprintCalculator());
+                message = plainFactory.nextObject();
+            }
+    
+            // Dealing with literal data
+            if (message instanceof PGPLiteralData) {
+                PGPLiteralData literalData = (PGPLiteralData) message;
+                try (InputStream literalInput = literalData.getInputStream()) {
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = literalInput.read(buffer)) > 0) {
+                        outStream.write(buffer, 0, len);
                     }
-                } else {
-                    throw new PGPException("Message is not a literal data packet.");
                 }
-        
-            } catch (Exception e) {
-                throw new PGPException("Error during decryption: " + e.getMessage(), e);
+            } else {
+                throw new PGPException("Message is not a literal data packet.");
             }
-    }
     
+        } catch (Exception e) {
+            throw new PGPException("Error during decryption: " + e.getMessage(), e);
+        }
+    }
 
+    
     public static void main(String[] args) throws Exception {
         String inputFilePath = "encrypted_sample.txt";
         String outputFilePath = "decrypted_sample.txt";
