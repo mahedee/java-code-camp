@@ -1,0 +1,5 @@
+# Created at 2024-09-15T14:44:52.489
+Boot Manifest-JAR contains absolute paths in classpath 'D:\Projects\Github\java-code-camp\rnd\src\PGP\pgp-encryption-v2\target\test-classes'
+Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+'other' has different root
+

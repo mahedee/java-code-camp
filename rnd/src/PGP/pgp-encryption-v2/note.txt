@@ -1,0 +1,5 @@
+Main Article Link: https://medium.com/@kthsingh.ms/encrypt-and-decrypt-anything-bytes-files-streams-with-pgp-using-bouncy-castle-and-java-ad335ae9f747
+
+Yes, you can create a Maven project that bundles all of its dependencies into a single executable JAR file (also known as a "fat JAR" or "uber JAR") and then run it using the command line.
+
+Here are the steps to create an executable JAR with dependencies and run it:
