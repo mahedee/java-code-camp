@@ -1,0 +1,7 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "bcpg-jdk15on-1.70.jar",
+        "bcprov-jdk15on-1.70.jar"
+    ]
+}

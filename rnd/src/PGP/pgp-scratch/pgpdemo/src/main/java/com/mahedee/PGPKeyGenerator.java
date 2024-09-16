@@ -110,19 +110,12 @@ public class PGPKeyGenerator {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
     
         // print current date time
         System.out.println("Current Date and Time " + new Date().toString());
 
-        try
-        {
-            generateKeyPair("test@example.com", "strong-passphrase");
-        }
-        catch (Exception e)
-        {
-            System.out.println("Error generating key pair: " + e.getMessage());
-        }
+        generateKeyPair("test@example.com", "strong-passphrase");
         System.out.println("Public Key and Private Key written to public_key.pgp and private_key.pgp.");
             
     }
