@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class PGPDecryptorMain {
@@ -88,7 +90,19 @@ public class PGPDecryptorMain {
                     // Close streams after processing
                     encryptedFileStream.close();
                     decryptedOutputStream.close();
+
+                    // Move the file from source to destination
                     Files.move(encryptedFile.toPath(), badFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                    // Delete the temporary file created for decryption in decrypted directory
+                    //Files.delete(Paths.get(decryptedFilePath));
+
+                    // Convert the String path to a Path object
+                    Path pathToDelete = Paths.get(decryptedFilePath);
+
+                    // Delete the file
+                    Files.delete(pathToDelete);
+
                 }
             }
 
