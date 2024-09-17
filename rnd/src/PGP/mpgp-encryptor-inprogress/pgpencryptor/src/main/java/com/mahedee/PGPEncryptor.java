@@ -132,7 +132,7 @@ public class PGPEncryptor {
             // File paths
             String plainTextFile = "plaintext.txt";
             String publicKeyFile = "public_key.pgp";
-            String encryptedFile = "encryptedtext.txt";
+            String encryptedFile = "encryptedtext3.txt";
 
             // Read the plaintext file
             byte[] plainTextBytes = Files.readAllBytes(Paths.get(plainTextFile));
