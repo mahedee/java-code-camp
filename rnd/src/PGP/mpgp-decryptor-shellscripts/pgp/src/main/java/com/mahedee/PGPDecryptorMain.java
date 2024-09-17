@@ -50,13 +50,21 @@ public class PGPDecryptorMain {
                     continue;
                 }
 
-                try {
-                    // Prepare input stream for the encrypted file
-                    InputStream encryptedFileStream = new FileInputStream(encryptedFile);
+                // Prepare input stream for the encrypted file
+                InputStream encryptedFileStream = new FileInputStream(encryptedFile);
 
-                    // Prepare output stream for the decrypted file
-                    String decryptedFilePath = destPath + File.separator + encryptedFile.getName();
-                    OutputStream decryptedOutputStream = new FileOutputStream(decryptedFilePath);
+                // Prepare output stream for the decrypted file
+                String decryptedFilePath = destPath + File.separator + encryptedFile.getName();
+                OutputStream decryptedOutputStream = new FileOutputStream(decryptedFilePath);
+
+                try {
+                    // // Prepare input stream for the encrypted file
+                    // InputStream encryptedFileStream = new FileInputStream(encryptedFile);
+
+                    // // Prepare output stream for the decrypted file
+                    // String decryptedFilePath = destPath + File.separator +
+                    // encryptedFile.getName();
+                    // OutputStream decryptedOutputStream = new FileOutputStream(decryptedFilePath);
 
                     // Perform decryption
                     decryptionUtil.decrypt(encryptedFileStream, decryptedOutputStream);
@@ -71,10 +79,15 @@ public class PGPDecryptorMain {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println("Failed to decrypt file: " + encryptedFile.getName() + ". Moving to bad files folder.");
+                    System.out.println(
+                            "Failed to decrypt file: " + encryptedFile.getName() + ". Moving to bad files folder.");
 
                     // Move the file to pathForBadFiles if decryption fails
                     File badFile = new File(pathForBadFiles + File.separator + encryptedFile.getName());
+
+                    // Close streams after processing
+                    encryptedFileStream.close();
+                    decryptedOutputStream.close();
                     Files.move(encryptedFile.toPath(), badFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 }
             }
@@ -84,5 +97,5 @@ public class PGPDecryptorMain {
             System.out.println("An error occurred during decryption: " + e.getMessage());
         }
     }
-    
+
 }

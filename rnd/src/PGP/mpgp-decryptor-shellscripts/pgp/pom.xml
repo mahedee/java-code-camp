@@ -29,7 +29,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.mahedee.PGPDecryptor</mainClass> <!-- Replace with your
+                            <mainClass>com.mahedee.PGPDecryptorMain</mainClass> <!-- Replace with your
                             main class -->
                         </manifest>
                     </archive>
