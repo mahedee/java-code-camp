@@ -1,4 +1,5 @@
 package com.mahedee;
+import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPEncryptedData;
@@ -27,7 +28,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+
 public class PGPDecryptor {
+
+    private static final Logger logger = Logger.getLogger(PGPDecryptor.class);
 
     static {
         // Add BouncyCastle to JVM
@@ -44,6 +48,8 @@ public class PGPDecryptor {
                 PGPUtil.getDecoderStream(privateKeyIn),
                 new JcaKeyFingerprintCalculator()
         );
+
+        logger.info("Initialized PGPDecryptor with private key");
     }
 
     // Overloaded constructor to support key string input

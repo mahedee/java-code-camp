@@ -1,6 +1,6 @@
 package com.mahedee;
 
-
+import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
@@ -32,6 +32,8 @@ import java.util.Optional;
 
 public class CommonUtils {
 
+    private static final Logger logger = Logger.getLogger(CommonUtils.class); // Initialize Logger
+
     /**
      * Decrypts the public Key encrypted data using the provided private key and writes it to the output stream
      *
@@ -41,7 +43,9 @@ public class CommonUtils {
      * @throws IOException  for IO related error
      * @throws PGPException for pgp related errors
      */
+
     static void decrypt(OutputStream clearOut, PGPPrivateKey pgpPrivateKey, PGPPublicKeyEncryptedData publicKeyEncryptedData) throws IOException, PGPException {
+        logger.info("Starting decrypt method in CommonUtils");
         PublicKeyDataDecryptorFactory decryptorFactory = new JcePublicKeyDataDecryptorFactoryBuilder()
                 .setProvider(BouncyCastleProvider.PROVIDER_NAME).build(pgpPrivateKey);
         InputStream decryptedCompressedIn = publicKeyEncryptedData.getDataStream(decryptorFactory);

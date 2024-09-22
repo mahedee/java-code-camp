@@ -1,5 +1,6 @@
 package com.mahedee;
 
+import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,10 +10,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class PGPDecryptorMain {
 
+    private static final Logger logger = Logger.getLogger(PGPDecryptorMain.class);
+
     public static void main(String[] args) {
+        logger.info("PGP Decryption started at: "
+                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         // Default directory values
         String defaultSourcePath = "files/encrypted-files";
         String defaultDestPath = "files/decrypted-files";
@@ -31,6 +38,12 @@ public class PGPDecryptorMain {
         System.out.println("Private Key File: " + pvtKeyPath);
         System.out.println("Path for bad files: " + pathForBadFiles);
 
+        // Log the directories being used
+        logger.info("Source Directory: " + sourcePath);
+        logger.info("Destination Directory: " + destPath);
+        logger.info("Private Key File: " + pvtKeyPath);
+        logger.info("Path for bad files: " + pathForBadFiles);
+
         // Get the private key input stream
         try (InputStream privateKeyStream = new FileInputStream(pvtKeyPath)) {
 
@@ -42,7 +55,8 @@ public class PGPDecryptorMain {
             File[] encryptedFiles = sourceDir.listFiles();
 
             if (encryptedFiles == null || encryptedFiles.length == 0) {
-                System.out.println("No files found in the source directory.");
+                //System.out.println("No files found in the source directory.");
+                logger.info("No files found in the source directory.");
                 return;
             }
 
@@ -80,6 +94,8 @@ public class PGPDecryptorMain {
                     System.out.println("Decrypted and removed: " + encryptedFile.getName());
 
                 } catch (Exception e) {
+
+                    logger.error("Failed to decrypt file: " + encryptedFile.getName(), e);
                     e.printStackTrace();
                     System.out.println(
                             "Failed to decrypt file: " + encryptedFile.getName() + ". Moving to bad files folder.");
@@ -94,8 +110,10 @@ public class PGPDecryptorMain {
                     // Move the file from source to destination
                     Files.move(encryptedFile.toPath(), badFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
+                    logger.warn("Moved the file to bad files folder: " + encryptedFile.getName());
+
                     // Delete the temporary file created for decryption in decrypted directory
-                    //Files.delete(Paths.get(decryptedFilePath));
+                    // Files.delete(Paths.get(decryptedFilePath));
 
                     // Convert the String path to a Path object
                     Path pathToDelete = Paths.get(decryptedFilePath);
@@ -108,6 +126,7 @@ public class PGPDecryptorMain {
 
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("An error occurred during decryption", e);
             System.out.println("An error occurred during decryption: " + e.getMessage());
         }
     }
