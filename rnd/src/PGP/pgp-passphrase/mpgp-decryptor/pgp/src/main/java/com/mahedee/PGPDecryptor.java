@@ -51,14 +51,20 @@ public class PGPDecryptor {
     private PGPPrivateKey findSecretKey(long keyID) throws PGPException {
         PGPSecretKey pgpSecretKey = pgpSecretKeyRingCollection.getSecretKey(keyID);
         if (pgpSecretKey == null) {
+            logger.error("Secret key not found for keyID: " + keyID);
             return null;
         }
-        // Decrypt the private key using the passphrase
-        return pgpSecretKey.extractPrivateKey(
-                new JcePBESecretKeyDecryptorBuilder()
-                        .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                        .build(passphrase.toCharArray())
-        );
+        try {
+            // Decrypt the private key using the passphrase
+            return pgpSecretKey.extractPrivateKey(
+                    new JcePBESecretKeyDecryptorBuilder()
+                            .setProvider(BouncyCastleProvider.PROVIDER_NAME)
+                            .build(passphrase.toCharArray())
+            );
+        } catch (PGPException e) {
+            logger.error("Error extracting private key: Possible incorrect passphrase.", e);
+            throw new PGPException("Error extracting private key: Possible incorrect passphrase.", e);
+        }
     }
 
     // Decrypt method
@@ -89,7 +95,12 @@ public class PGPDecryptor {
             throw new PGPException("Could not extract private key using the provided passphrase");
         }
 
-        CommonUtils.decrypt(clearOut, pgpPrivateKey, publicKeyEncryptedData);
+        try {
+            CommonUtils.decrypt(clearOut, pgpPrivateKey, publicKeyEncryptedData);
+        } catch (Exception e) {
+            logger.error("Error during decryption process", e);
+            throw new IOException("Decryption failed", e);
+        }
     }
 
     // Overloaded decrypt method to handle byte arrays
